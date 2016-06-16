@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(create_sherpa_proxy)
+project(sherpa_proxy)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")

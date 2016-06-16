@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>create_sherpa_proxy</name>
+  <name>sherpa_proxy</name>
   <version>0.0.0</version>
   <description>The lrs_sherpa_proxy package</description>
 
