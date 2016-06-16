@@ -7,6 +7,7 @@
 
 
 Json::Value get_json_value(std_msgs::String msg);	
-Json::Value get_json_value(mhri_msgs::multimodal_action msg);
-Json::Value get_json_value(mhri_msgs::multimodal msg);
+//Json::Value get_json_value(mhri_msgs::multimodal_action msg);
+//Json::Value get_json_value(mhri_msgs::multimodal msg);
+Json::Value get_json_value(camera_handler_sherpa::Camera msg);
 #endif

@@ -20,8 +20,22 @@ void test_string_callback (const ros::MessageEvent<std_msgs::String const>& even
   send_forward_all( jmsg );
 }
 
+void camera_callback (const ros::MessageEvent<camera_handler_sherpa::Camera const>& event) {
 
-void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action const>& event) {
+  const std::string& publisher_name = event.getPublisherName();
+  std::string ns = ros::names::clean (ros::this_node::getNamespace());
+  if (publisher_name == ns + "/roszyre") return;
+
+  const camera_handler_sherpa::CameraConstPtr& msg = event.getMessage();
+
+  Json::Value jmsg;
+  jmsg["topic-name"] = ns + "/camera_published";
+  jmsg["msg"] = get_json_value (*msg);
+
+  send_forward_all( jmsg );
+}
+
+/*void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action const>& event) {
 
   const std::string& publisher_name = event.getPublisherName();
   std::string ns = ros::names::clean (ros::this_node::getNamespace());
@@ -35,9 +49,9 @@ void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action co
     
 	send_forward_to ("op1", jmsg);
 
-}
+}*/
 
-void interpretation_cb ( const ros::MessageEvent<mhri_msgs::multimodal const>& event) {
+/*void interpretation_cb ( const ros::MessageEvent<mhri_msgs::multimodal const>& event) {
 
   const std::string& publisher_name = event.getPublisherName();
   std::string ns = ros::names::clean (ros::this_node::getNamespace());
@@ -53,5 +67,5 @@ void interpretation_cb ( const ros::MessageEvent<mhri_msgs::multimodal const>& e
 
 	send_forward_to ("op0", jmsg);
 
-}
+}*/
 

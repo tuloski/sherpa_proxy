@@ -49,6 +49,7 @@
   <build_depend>lrs_util_tst</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
+  <build_depend>camera_handler_sherpa</build_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>geographic_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
@@ -59,6 +60,7 @@
   <run_depend>lrs_util_tst</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
+  <run_depend>camera_handler_sherpa</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

@@ -10,8 +10,9 @@
 #include "std_msgs/String.h"
 
 void test_string_callback (const ros::MessageEvent<std_msgs::String const>& event);
-void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action const>& event);
-void interpretation_cb ( const ros::MessageEvent<mhri_msgs::multimodal const>& event);
+void camera_callback (const ros::MessageEvent<camera_handler_sherpa::Camera const>& event);
+//void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action const>& event);
+//void interpretation_cb ( const ros::MessageEvent<mhri_msgs::multimodal const>& event);
 
 #endif
 

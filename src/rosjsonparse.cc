@@ -4,7 +4,7 @@
 
 using namespace std;
 
-bool ros_json_parse( Json::Value m, mhri_msgs::multimodal_action & action ) {
+/*bool ros_json_parse( Json::Value m, mhri_msgs::multimodal_action & action ) {
 
   action.selected = m["selected"].asString();
   action.type = m["type"].asString();
@@ -20,9 +20,9 @@ bool ros_json_parse( Json::Value m, mhri_msgs::multimodal_action & action ) {
   action.source = m["source"].asString();
 
   return true;
-}
+}*/
 
-bool ros_json_parse( Json::Value m, mhri_msgs::multimodal & cmds ) {
+/*bool ros_json_parse( Json::Value m, mhri_msgs::multimodal & cmds ) {
 
   int s = m["action_size"].asInt();
 
@@ -45,6 +45,26 @@ bool ros_json_parse( Json::Value m, mhri_msgs::multimodal & cmds ) {
   }
 
   return true; 
+
+}*/
+
+bool ros_json_parse( Json::Value res, camera_handler_sherpa::Camera & camera ) {
+
+	camera.taken_photo = res["taken_photo"].asBool();
+	camera.taken_video = res["taken_video"].asBool();
+	camera.N_photo_taken = res["N_photo_taken"].asInt();
+	camera.N_video_taken = res["N_video_taken"].asInt();
+	camera.path_photo = res["path_photo"].asString();
+	camera.path_video = res["path_video"].asString();
+	camera.geopose.position.latitude = res["geopose"]["latitude"].asDouble();
+	camera.geopose.position.longitude = res["geopose"]["longitude"].asDouble();
+	camera.geopose.position.altitude = res["geopose"]["altitude"].asDouble();
+	camera.geopose.orientation.w = res["geopose"]["qw"].asDouble();
+	camera.geopose.orientation.x = res["geopose"]["qx"].asDouble();
+	camera.geopose.orientation.y = res["geopose"]["qy"].asDouble();
+	camera.geopose.orientation.z = res["geopose"]["qz"].asDouble();
+
+	return true;
 
 }
 

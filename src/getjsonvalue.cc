@@ -3,7 +3,7 @@
 using namespace std;
 
 /** Multimodal action -> Json */
-Json::Value get_json_value(mhri_msgs::multimodal_action msg) {
+/*Json::Value get_json_value(mhri_msgs::multimodal_action msg) {
   
   Json::Value res;
   res["selected"] = msg.selected;
@@ -20,9 +20,9 @@ Json::Value get_json_value(mhri_msgs::multimodal_action msg) {
   res["source"] = msg.source;
 
   return res;
-}
+}*/
 
-Json::Value get_json_value(mhri_msgs::multimodal msg) {
+/*Json::Value get_json_value(mhri_msgs::multimodal msg) {
 
   Json::Value res;
   int interp_size = msg.action.size();
@@ -43,6 +43,26 @@ Json::Value get_json_value(mhri_msgs::multimodal msg) {
 
   return res;
 
+}*/
+
+Json::Value get_json_value(camera_handler_sherpa::Camera msg) {
+
+  Json::Value res;
+  res["taken_photo"] = msg.taken_photo;
+  res["taken_video"] = msg.taken_video;
+  res["N_photo_taken"] = msg.N_photo_taken;
+  res["N_video_taken"] = msg.N_video_taken;
+  res["path_photo"] = msg.path_photo;
+  res["path_video"] = msg.path_video;
+  res["geopose"]["latitude"] = msg.geopose.position.latitude;
+  res["geopose"]["longitude"] = msg.geopose.position.longitude;
+  res["geopose"]["altitude"] = msg.geopose.position.altitude;
+  res["geopose"]["qw"] = msg.geopose.orientation.w;
+  res["geopose"]["qx"] = msg.geopose.orientation.x;
+  res["geopose"]["qy"] = msg.geopose.orientation.y;
+  res["geopose"]["qz"] = msg.geopose.orientation.z;
+
+  return res;
 }
 
 Json::Value get_json_value(std_msgs::String msg) {

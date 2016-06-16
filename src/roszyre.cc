@@ -11,13 +11,15 @@ std::map<std::string, std::string> short_name_to_uuid;
 std::map<std::string, int> uuid_to_tree_id;
 std::map<int, std::string> tree_id_to_uuid;
 
+std::map<std::string, ros::Publisher> camera_pubs;
+
 std::string proxy_uuid = "";
 
 
 //Declare here Publisher
 ros::Publisher test_string_pub;
-ros::Publisher multimodal_cmd_pub;
-ros::Publisher interpretation_pub;
+//ros::Publisher multimodal_cmd_pub;
+//ros::Publisher interpretation_pub;
 
 void send_forward_all (zmsg_t ** msg) {
   //  ROS_ERROR ("send_forward_all msg");
@@ -206,7 +208,16 @@ void zyre_spin_thread () {
           
           Json::Value jmsg = rmsg["msg"];
 
-          if (topic == "/CREATE/test_string") {            
+          if (camera_pubs.find (topic) != camera_pubs.end()) {
+        	  camera_handler_sherpa::Camera cam;
+			  if (ros_json_parse (jmsg, cam)) {
+				  camera_pubs[topic].publish (cam);
+			  } else {
+				  ROS_ERROR ("Could not parse json to GeoPose");
+			  }
+		  }
+
+          /*if (topic == "/CREATE/test_string") {
             
             std_msgs::String msg_string;
             if (ros_json_parse (jmsg, msg_string)) {              
@@ -215,9 +226,9 @@ void zyre_spin_thread () {
             else {
               ROS_ERROR ("Could not parse json to Joy");
             }
-          }
+          }*/
 
-          else if( topic == "/CREATE/multimodal_cmd") {
+          /*else if( topic == "/CREATE/multimodal_cmd") {
             mhri_msgs::multimodal_action cmd;
             if (ros_json_parse (jmsg, cmd)) {              
               multimodal_cmd_pub.publish( cmd );
@@ -225,9 +236,9 @@ void zyre_spin_thread () {
             else {
               ROS_ERROR ("Could not parse multimodal command");
             }
-          }
+          }*/
 
-          else if( topic == "/UNIBH/interpretation") {
+          /*else if( topic == "/UNIBH/interpretation") {
             mhri_msgs::multimodal cmd;
             if (ros_json_parse (jmsg, cmd)) {              
               interpretation_pub.publish( cmd );
@@ -235,7 +246,7 @@ void zyre_spin_thread () {
             //else {
             //  ROS_ERROR ("Could not parse interpretation command");
             //}
-          }
+          }*/
         }
         free (peerid);
         free (name);
@@ -306,13 +317,26 @@ int main(int argc, char** argv) {
   std::string ns = ros::names::clean (ros::this_node::getNamespace());
   
   //Declare here the publishers and subscribers
-  test_string_pub = n.advertise<std_msgs::String>("/CREATE/test_string", 0);
-  multimodal_cmd_pub = n.advertise<mhri_msgs::multimodal_action>("/CREATE/multimodal_cmd", 0);
-  interpretation_pub = n.advertise<mhri_msgs::multimodal>("/UNIHB/interpretation", 0);
+  //test_string_pub = n.advertise<std_msgs::String>("/CREATE/test_string", 0);
+  //multimodal_cmd_pub = n.advertise<mhri_msgs::multimodal_action>("/CREATE/multimodal_cmd", 0);
+  //interpretation_pub = n.advertise<mhri_msgs::multimodal>("/UNIHB/interpretation", 0);
   
-  ros::Subscriber test_string_sub =    n.subscribe("/CREATE/test_string/proxy", 1000, test_string_callback);
-  ros::Subscriber multimodal_cmd_sub = n.subscribe("/CREATE/multimodal_cmd/proxy", 1000, multimodal_cmd_cb );  
-  ros::Subscriber interpretation_sub = n.subscribe("/UNIHB/interpretation/proxy", 1000, interpretation_cb );
+  //ros::Subscriber test_string_sub =    n.subscribe("/CREATE/test_string/proxy", 1000, test_string_callback);
+  //ros::Subscriber multimodal_cmd_sub = n.subscribe("/CREATE/multimodal_cmd/proxy", 1000, multimodal_cmd_cb );
+  //ros::Subscriber interpretation_sub = n.subscribe("/UNIHB/interpretation/proxy", 1000, interpretation_cb );
+  ros::Subscriber camera_sub = n.subscribe("camera_published", 100, camera_callback );
+
+  	//TODO don't like this fixed list of agents
+  	std::vector<std::string> wasps;
+  	wasps.push_back("wasp0");
+  	wasps.push_back("wasp1");
+  	wasps.push_back("wasp2");
+
+    //ros::param::get("/agents", agents);	//to get a different list of agents from params
+    for (unsigned int i=0; i<wasps.size(); i++) {
+      std::string topic = "/" + wasps[i] + "/camera_published";
+      camera_pubs[topic] = n.advertise<camera_handler_sherpa::Camera>(topic, 1);
+    }
 
   std::string name = "lq0";
   if (ns != "") {
