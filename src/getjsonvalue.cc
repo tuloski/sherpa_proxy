@@ -65,6 +65,63 @@ Json::Value get_json_value(camera_handler_sherpa::Camera msg) {
   return res;
 }
 
+Json::Value get_json_value(geometry_msgs::Twist msg) {
+
+  Json::Value res;
+  res["linear"]["x"] = msg.linear.x;
+  res["linear"]["y"] = msg.linear.y;
+  res["linear"]["z"] = msg.linear.z;
+  res["angular"]["x"] = msg.angular.x;
+  res["angular"]["y"] = msg.angular.y;
+  res["angular"]["z"] = msg.angular.z;
+
+  return res;
+}
+
+Json::Value get_json_value(lrs_msgs_common::LeashingCommand msg) {
+
+  Json::Value res;
+  res["horizontal_distance"] = msg.horizontal_distance;
+  res["horizontal_distance_vel"] = msg.horizontal_distance_vel;
+  res["horizontal_heading"] = msg.horizontal_heading;
+  res["horizontal_heading_vel"] = msg.horizontal_heading_vel;
+  res["distance_north"] = msg.distance_north;
+  res["distance_north_vel"] = msg.distance_north_vel;
+  res["distance_east"] = msg.distance_east;
+  res["distance_east_vel"] = msg.distance_east_vel;
+  res["horizontal_control_mode"] = msg.horizontal_control_mode;
+  res["vertical_distance"] = msg.vertical_distance;
+  res["vertical_distance_vel"] = msg.vertical_distance_vel;
+  res["vertical_control_mode"] = msg.vertical_control_mode;
+  res["yaw"] = msg.yaw;
+  res["yaw_vel"] = msg.yaw_vel;
+  res["yaw_control_mode"] = msg.yaw_control_mode;
+  res["yawpoint"]["latitude"] = msg.yawpoint.latitude;
+  res["yawpoint"]["longitude"] = msg.yawpoint.longitude;
+  res["yawpoint"]["altitude"] = msg.yawpoint.altitude;
+
+  return res;
+}
+
+Json::Value get_json_value(lrs_msgs_common::LeashingStatus msg) {
+
+  Json::Value res;
+  res["horizontal_distance"] = msg.horizontal_distance;
+  res["horizontal_heading"] = msg.horizontal_heading;
+  res["distance_north"] = msg.distance_north;
+  res["distance_east"] = msg.distance_east;
+  res["horizontal_control_mode"] = msg.horizontal_control_mode;
+  res["vertical_distance"] = msg.vertical_distance;
+  res["vertical_control_mode"] = msg.vertical_control_mode;
+  res["yaw"] = msg.yaw;
+  res["yaw_control_mode"] = msg.yaw_control_mode;
+  res["yawpoint"]["latitude"] = msg.yawpoint.latitude;
+  res["yawpoint"]["longitude"] = msg.yawpoint.longitude;
+  res["yawpoint"]["altitude"] = msg.yawpoint.altitude;
+
+  return res;
+}
+
 Json::Value get_json_value(std_msgs::String msg) {
   Json::Value res;
   res["data"] = msg.data;

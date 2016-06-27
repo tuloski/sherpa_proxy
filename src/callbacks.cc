@@ -35,6 +35,51 @@ void camera_callback (const ros::MessageEvent<camera_handler_sherpa::Camera cons
   send_forward_all( jmsg );
 }
 
+void operator_control_velocity_callback (const ros::MessageEvent<geometry_msgs::Twist const>& event) {
+
+  const std::string& publisher_name = event.getPublisherName();
+  std::string ns = ros::names::clean (ros::this_node::getNamespace());
+  if (publisher_name == ns + "/roszyre") return;
+
+  const geometry_msgs::TwistConstPtr& msg = event.getMessage();
+
+  Json::Value jmsg;
+  jmsg["topic-name"] = "/wasp/vel_ctrl";
+  jmsg["msg"] = get_json_value(*msg);
+
+  send_forward_all( jmsg );
+}
+
+void leashing_command_callback (const ros::MessageEvent<lrs_msgs_common::LeashingCommand const>& event) {
+
+  const std::string& publisher_name = event.getPublisherName();
+  std::string ns = ros::names::clean (ros::this_node::getNamespace());
+  if (publisher_name == ns + "/roszyre") return;
+
+  const lrs_msgs_common::LeashingCommandConstPtr& msg = event.getMessage();
+
+  Json::Value jmsg;
+  jmsg["topic-name"] = "/CREATE/leashing_command";
+  jmsg["msg"] = get_json_value(*msg);
+
+  send_forward_all( jmsg );
+}
+
+void leashing_status_callback (const ros::MessageEvent<lrs_msgs_common::LeashingStatus const>& event) {
+
+  const std::string& publisher_name = event.getPublisherName();
+  std::string ns = ros::names::clean (ros::this_node::getNamespace());
+  if (publisher_name == ns + "/roszyre") return;
+
+  const lrs_msgs_common::LeashingStatusConstPtr& msg = event.getMessage();
+
+  Json::Value jmsg;
+  jmsg["topic-name"] = "/wasp/leashing_status";
+  jmsg["msg"] = get_json_value(*msg);
+
+  send_forward_all( jmsg );
+}
+
 /*void multimodal_cmd_cb ( const ros::MessageEvent<mhri_msgs::multimodal_action const>& event) {
 
   const std::string& publisher_name = event.getPublisherName();

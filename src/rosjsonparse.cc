@@ -68,6 +68,63 @@ bool ros_json_parse( Json::Value res, camera_handler_sherpa::Camera & camera ) {
 
 }
 
+bool ros_json_parse( Json::Value res, geometry_msgs::Twist & twist ) {
+
+	twist.linear.x = res["linear"]["x"].asDouble();
+	twist.linear.y = res["linear"]["y"].asDouble();
+	twist.linear.z = res["linear"]["z"].asDouble();
+	twist.angular.x = res["angular"]["x"].asDouble();
+	twist.angular.y = res["angular"]["y"].asDouble();
+	twist.angular.z = res["angular"]["z"].asDouble();
+
+	return true;
+
+}
+
+bool ros_json_parse( Json::Value res, lrs_msgs_common::LeashingCommand & leashing_command ) {
+
+	leashing_command.horizontal_distance = res["horizontal_distance"].asDouble();
+	leashing_command.horizontal_distance_vel = res["horizontal_distance_vel"].asDouble();
+	leashing_command.horizontal_heading = res["horizontal_heading"].asDouble();
+	leashing_command.horizontal_heading_vel = res["horizontal_heading_vel"].asDouble();
+	leashing_command.distance_north = res["distance_north"].asDouble();
+	leashing_command.distance_north_vel = res["distance_north_vel"].asDouble();
+	leashing_command.distance_east = res["distance_east"].asDouble();
+	leashing_command.distance_east_vel = res["distance_east_vel"].asDouble();
+	leashing_command.horizontal_control_mode = res["horizontal_control_mode"].asInt();
+	leashing_command.vertical_distance = res["vertical_distance"].asDouble();
+	leashing_command.vertical_distance_vel = res["vertical_distance_vel"].asDouble();
+	leashing_command.vertical_control_mode = res["vertical_control_mode"].asInt();
+	leashing_command.yaw = res["yaw"].asDouble();
+	leashing_command.yaw_vel = res["yaw_vel"].asDouble();
+	leashing_command.yaw_control_mode = res["yaw_control_mode"].asInt();
+	leashing_command.yawpoint.latitude = res["yawpoint"]["latitude"].asDouble();
+	leashing_command.yawpoint.longitude = res["yawpoint"]["longitude"].asDouble();
+	leashing_command.yawpoint.altitude = res["yawpoint"]["altitude"].asDouble();
+
+	return true;
+
+}
+
+bool ros_json_parse( Json::Value res, lrs_msgs_common::LeashingStatus & leashing_status ) {
+
+	leashing_status.horizontal_distance = res["horizontal_distance"].asDouble();
+	leashing_status.horizontal_heading = res["horizontal_heading"].asDouble();
+	leashing_status.distance_north = res["distance_north"].asDouble();
+	leashing_status.distance_east = res["distance_east"].asDouble();
+	leashing_status.horizontal_control_mode = res["horizontal_control_mode"].asInt();
+	leashing_status.vertical_distance = res["vertical_distance"].asDouble();
+	leashing_status.vertical_control_mode = res["vertical_control_mode"].asInt();
+	leashing_status.yaw = res["yaw"].asDouble();
+	leashing_status.yaw_control_mode = res["yaw_control_mode"].asInt();
+	leashing_status.yawpoint.latitude = res["yawpoint"]["latitude"].asDouble();
+	leashing_status.yawpoint.longitude = res["yawpoint"]["longitude"].asDouble();
+	leashing_status.yawpoint.altitude = res["yawpoint"]["altitude"].asDouble();
+
+	return true;
+
+}
+
 bool ros_json_parse( Json::Value m, std_msgs::String & str ) {
   
   //std_msgs::Header header;

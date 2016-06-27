@@ -13,6 +13,9 @@ std::map<int, std::string> tree_id_to_uuid;
 
 std::map<std::string, ros::Publisher> camera_pubs;
 
+std::vector<std::string> wasps;
+
+
 std::string proxy_uuid = "";
 
 
@@ -20,6 +23,9 @@ std::string proxy_uuid = "";
 ros::Publisher test_string_pub;
 //ros::Publisher multimodal_cmd_pub;
 //ros::Publisher interpretation_pub;
+ros::Publisher velocity_ctrl_pub;
+ros::Publisher leashing_command_pub;
+ros::Publisher leashing_status_pub;
 
 void send_forward_all (zmsg_t ** msg) {
   //  ROS_ERROR ("send_forward_all msg");
@@ -204,16 +210,46 @@ void zyre_spin_thread () {
           }
 
           std::string topic = rmsg["topic-name"].asString();
-          
-          
+
           Json::Value jmsg = rmsg["msg"];
 
-          if (camera_pubs.find (topic) != camera_pubs.end()) {
+          //ROS_ERROR ("Index: %d ", distance(camera_pubs.begin(), camera_pubs.find(topic)) );
+          if (camera_pubs.find (topic) != camera_pubs.end() && wasps[distance(camera_pubs.begin(), camera_pubs.find(topic))] != ns) {
         	  camera_handler_sherpa::Camera cam;
 			  if (ros_json_parse (jmsg, cam)) {
 				  camera_pubs[topic].publish (cam);
 			  } else {
-				  ROS_ERROR ("Could not parse json to GeoPose");
+				  ROS_ERROR ("Could not parse json to Camera");
+			  }
+		  }
+
+          if (topic == "/wasp/vel_ctrl") {
+        	  geometry_msgs::Twist msg_twist;
+			  if (ros_json_parse (jmsg, msg_twist)) {
+				  velocity_ctrl_pub.publish( msg_twist );
+			  }
+			  else {
+				ROS_ERROR ("Could not parse json to twist");
+			  }
+		  }
+
+          else if (topic == "/CREATE/leashing_command") {
+        	  lrs_msgs_common::LeashingCommand leashing_command;
+			  if (ros_json_parse (jmsg, leashing_command)) {
+				  leashing_command_pub.publish( leashing_command );
+			  }
+			  else {
+				ROS_ERROR ("Could not parse json to leashing command");
+			  }
+		  }
+
+          else if (topic == "/wasp/leashing_status") {
+			  lrs_msgs_common::LeashingStatus leashing_status;
+			  if (ros_json_parse (jmsg, leashing_status)) {
+				  leashing_status_pub.publish( leashing_status );
+			  }
+			  else {
+				ROS_ERROR ("Could not parse json to leashing status");
 			  }
 		  }
 
@@ -320,22 +356,29 @@ int main(int argc, char** argv) {
   //test_string_pub = n.advertise<std_msgs::String>("/CREATE/test_string", 0);
   //multimodal_cmd_pub = n.advertise<mhri_msgs::multimodal_action>("/CREATE/multimodal_cmd", 0);
   //interpretation_pub = n.advertise<mhri_msgs::multimodal>("/UNIHB/interpretation", 0);
+  velocity_ctrl_pub = n.advertise<geometry_msgs::Twist>("/wasp/vel_ctrl/proxy", 0);
+  leashing_command_pub = n.advertise<lrs_msgs_common::LeashingCommand>("/CREATE/leashing_command", 0);
+  leashing_status_pub = n.advertise<lrs_msgs_common::LeashingStatus>("/wasp/leashing_status", 0);
   
   //ros::Subscriber test_string_sub =    n.subscribe("/CREATE/test_string/proxy", 1000, test_string_callback);
   //ros::Subscriber multimodal_cmd_sub = n.subscribe("/CREATE/multimodal_cmd/proxy", 1000, multimodal_cmd_cb );
   //ros::Subscriber interpretation_sub = n.subscribe("/UNIHB/interpretation/proxy", 1000, interpretation_cb );
   ros::Subscriber camera_sub = n.subscribe("camera_published", 100, camera_callback );
+  ros::Subscriber velocity_ctrl_sub = n.subscribe("/wasp/vel_ctrl", 100, operator_control_velocity_callback );
+  ros::Subscriber leashing_command_sub = n.subscribe("/CREATE/leashing_command/proxy", 100, leashing_command_callback );
+  ros::Subscriber leashing_status_sub = n.subscribe("/wasp/leashing_status/proxy", 100, leashing_status_callback );
 
-  	//TODO don't like this fixed list of agents
-  	std::vector<std::string> wasps;
-  	wasps.push_back("wasp0");
-  	wasps.push_back("wasp1");
-  	wasps.push_back("wasp2");
+  //TODO don't like this fixed list of agents
+  wasps.push_back("/wasp0");
+  wasps.push_back("/wasp1");
+  wasps.push_back("/wasp2");
 
     //ros::param::get("/agents", agents);	//to get a different list of agents from params
     for (unsigned int i=0; i<wasps.size(); i++) {
-      std::string topic = "/" + wasps[i] + "/camera_published";
-      camera_pubs[topic] = n.advertise<camera_handler_sherpa::Camera>(topic, 1);
+      std::string topic = wasps[i] + "/camera_published";
+      ROS_ERROR ("Index: %d ", distance(camera_pubs.begin(), camera_pubs.find(topic)) );
+      if (wasps[i] != ns)
+    	  camera_pubs[topic] = n.advertise<camera_handler_sherpa::Camera>(topic, 1);
     }
 
   std::string name = "lq0";
@@ -385,7 +428,7 @@ int main(int argc, char** argv) {
   ROS_INFO("Spinning roszyre");
 
   int counter = 0;
-  ros::Rate loop_rate(1000);
+  ros::Rate loop_rate(100);
 
   while (!zsys_interrupted) {
   
